@@ -128,43 +128,50 @@ def redirect_url(web):
         print("跳转代扣代缴页面失败！")
     return web
         
-def fill_blank(rows_list,web):
+def fill_blank(rows_list,web,retries):
     print("进入将本地数据填入税局模块！")
     done_list = []
-    try:   
-        for item in rows_list:
-            FJ=item[2]
-            tax_base=item[8]
-            imposed_on_item = item[5]
-            deduction_item = item[7]
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[1]/div/div[1]/button').click()  #新建
-            time.sleep(1)
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[3]/div[2]/div/div/div/input').send_keys(FJ)
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()
-            time.sleep(3)
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[7]/div[2]/div[1]/div/div/div/div').click() 
-            time.sleep(2)
-            web.find_element(By.XPATH,'/html/body/div[7]/div/div/div/ul/li[{}]'.format(imposed_on_item)).click() #征收品目,品目较多，没办法一次性加载完，会出现找不到元素的情况
-            time.sleep(1)
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[12]/div[2]/div[1]/div/div/div/div').click() 
-            time.sleep(0.5)
-            web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/ul/li[{}]'.format(deduction_item)).click() #代扣代缴项目
-            time.sleep(0.5)
-            #web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/div[1]/div/div[2]/table/tbody/tr[1]/td[5]').click()  #选择日期  2/28
-            #time.sleep(1)
-            web.find_element(By.XPATH,'//*[@id="Id"]/input').send_keys(tax_base)   #填入税基
-            time.sleep(0.5)
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()  #空点，激活税局计算税金
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[3]/div/button[2]').click() #点击确认
-            print("{},填写完毕！".format(FJ))
-            done_list.append(FJ)
-            time.sleep(1)
-            web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[1]/div/div[2]/button').click()  #点击暂存
-            time.sleep(1)
-        print("恭喜，填写完毕！")
-    except Exception as e:
-        print(e)
-        print("未填写完成，仅完成{}条！".format(len(done_list)))
+    tries =0
+    while tries< retries:
+        try:   
+            for item in rows_list:
+                FJ=item[2]
+                tax_base=item[8]
+                imposed_on_item = item[4]
+                deduction_item = item[6]
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[1]/div/div[1]/button').click()  #新建
+                time.sleep(1)
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[3]/div[2]/div/div/div/input').send_keys(FJ)
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()
+                time.sleep(3)
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[7]/div[2]/div[1]/div/div/div/div').click()
+                #                           /html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[7]/div[2]/div[1]/div/div/div/div
+                # body > section > section > section > main > div > div > div > div.dkdj-menu.gt-collapse-menu.gt-collapse-menu_primary > div.gt-collapse-menu-content.gt-collapse-menu-content-unfold > div.gt-collapse-menu-content-panel.gt-collapse-menu-content-panel-with-toolbar > div > div.dkdj-table-wrap > div:nth-child(1) > div > div:nth-child(4) > div > div.t-dialog__wrap > div > div > div.t-dialog__body > div > div > form > div.percent33w.t-form__item.t-form-item__zspmDm.t-form__item-with-extra > div.t-form__controls.t-is-error > div.t-form__controls-content > div > div > div > div > span > svg 
+                time.sleep(2)
+                web.find_element(By.XPATH,'//li[contains(@title,"{}")]'.format(imposed_on_item)).click() #征收品目,品目较多，没办法一次性加载完，会出现找不到元素的情况
+                #/html/body/div[7]/div/div/div/ul/li[4]   
+                time.sleep(1)
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[12]/div[2]/div[1]/div/div/div/div').click() 
+                time.sleep(0.5)
+                web.find_element(By.XPATH,'//li[contains(@title,"{}")]'.format(deduction_item)).click() #代扣代缴项目
+                time.sleep(0.5)
+                #web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/div[1]/div/div[2]/table/tbody/tr[1]/td[5]').click()  #选择日期  2/28
+                #time.sleep(1)
+                web.find_element(By.XPATH,'//*[@id="Id"]/input').send_keys(tax_base)   #填入税基
+                time.sleep(0.5)
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()  #空点，激活税局计算税金
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[3]/div/button[2]').click() #点击确认
+                print("{},填写完毕！".format(FJ))
+                done_list.append(FJ)
+                time.sleep(1)
+                web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[1]/div/div[2]/button').click()  #点击暂存
+                time.sleep(1)
+            print("恭喜，填写完毕！")
+            tries = tries +1
+        except Exception as e:
+            print(e)
+            print("未填写完成，仅完成{}条！".format(len(done_list)))
+            tries = tries +1
     return None
 
 
@@ -177,7 +184,7 @@ if __name__=="__main__":
     rows_list = prepara_data()
     web = log_in(tax_num ,person_name,person_password )
     web = redirect_url(web)
-    fill_blank(rows_list,web)
+    fill_blank(rows_list,web,retries=3)
     end_time = time.time()
     print("本次执行公司主体为{}，共耗时{}秒！".format(tax_num,(end_time-start_time)))
     #web.quit()
