@@ -144,12 +144,14 @@ def fill_blank(rows_list,web):
             time.sleep(3)
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[7]/div[2]/div[1]/div/div/div/div').click() 
             time.sleep(2)
-            web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/ul/li[{}]'.format(imposed_on_item)).click() #征收品目,品目较多，没办法一次性加载完，会出现找不到元素的情况
+            web.find_element(By.XPATH,'/html/body/div[7]/div/div/div/ul/li[{}]'.format(imposed_on_item)).click() #征收品目,品目较多，没办法一次性加载完，会出现找不到元素的情况
             time.sleep(1)
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[12]/div[2]/div[1]/div/div/div/div').click() 
             time.sleep(0.5)
-            web.find_element(By.XPATH,'/html/body/div[9]/div/div/div/ul/li[{}]'.format(deduction_item)).click() #代扣代缴项目
+            web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/ul/li[{}]'.format(deduction_item)).click() #代扣代缴项目
             time.sleep(0.5)
+            #web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/div[1]/div/div[2]/table/tbody/tr[1]/td[5]').click()  #选择日期  2/28
+            #time.sleep(1)
             web.find_element(By.XPATH,'//*[@id="Id"]/input').send_keys(tax_base)   #填入税基
             time.sleep(0.5)
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()  #空点，激活税局计算税金
@@ -178,7 +180,8 @@ if __name__=="__main__":
     fill_blank(rows_list,web)
     end_time = time.time()
     print("本次执行公司主体为{}，共耗时{}秒！".format(tax_num,(end_time-start_time)))
-    web.quit()
+    #web.quit()
+    
 """
 待优化方向：
 1、申报属期分为上一期和本期，区分关联公司和非关联公司；
