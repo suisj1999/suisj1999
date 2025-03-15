@@ -78,7 +78,7 @@ import pandas as pd
 def prepara_data():
     print("进入数据准备模块！")
     try:
-        df = pd.read_excel("try.xlsx")
+        df = pd.read_excel(r"D:\Learn\2025\try.xlsx")
         rows_list = []
         for index, row in df.iterrows():
             rows_list.append(row.tolist())  #将每一行数据作为一个列表，并嵌入到一个列表里面
@@ -120,8 +120,8 @@ def redirect_url(web):
     try:
         web.get("https://etax.zhejiang.chinatax.gov.cn:8443/sbzx/view/lzsfjssb/#/declare/dkdj")
         time.sleep(2)
-        web.find_element(By.XPATH,'/html/body/div[7]/div[2]/div/div/div[3]/div/button[2]').click() #打开代扣代缴页面，“确定”保存上次暂存数据
-        time.sleep(2)
+        #web.find_element(By.XPATH,'/html/body/div[7]/div[2]/div/div/div[3]/div/button[2]').click() #打开代扣代缴页面，“确定”保存上次暂存数据
+        #time.sleep(2)
         print("进入代扣代缴申报页面")
     except Exception as e:
         print(e)
@@ -130,6 +130,7 @@ def redirect_url(web):
         
 def fill_blank(rows_list,web):
     print("进入将本地数据填入税局模块！")
+    done_list = []
     try:   
         for item in rows_list:
             FJ=item[2]
@@ -142,7 +143,7 @@ def fill_blank(rows_list,web):
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()
             time.sleep(3)
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[7]/div[2]/div[1]/div/div/div/div').click() 
-            time.sleep(1)
+            time.sleep(2)
             web.find_element(By.XPATH,'/html/body/div[8]/div/div/div/ul/li[{}]'.format(imposed_on_item)).click() #征收品目,品目较多，没办法一次性加载完，会出现找不到元素的情况
             time.sleep(1)
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[12]/div[2]/div[1]/div/div/div/div').click() 
@@ -154,12 +155,14 @@ def fill_blank(rows_list,web):
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[2]/div/div/form/div[16]/div[2]/div/div/div/input').click()  #空点，激活税局计算税金
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[2]/div/div[2]/div[1]/div/div[4]/div/div[2]/div/div/div[3]/div/button[2]').click() #点击确认
             print("{},填写完毕！".format(FJ))
+            done_list.append(FJ)
             time.sleep(1)
             web.find_element(By.XPATH,'/html/body/section/section/section/main/div/div/div/div[1]/div[2]/div[1]/div/div[2]/button').click()  #点击暂存
             time.sleep(1)
         print("恭喜，填写完毕！")
     except Exception as e:
         print(e)
+        print("未填写完成，仅完成{}条！".format(len(done_list)))
     return None
 
 
@@ -174,7 +177,7 @@ if __name__=="__main__":
     web = redirect_url(web)
     fill_blank(rows_list,web)
     end_time = time.time()
-    print("本次执行公司主体为{}，本次共填写{}条数据！共耗时{}秒！".format(tax_num,len(rows_list),(end_time-start_time)))
+    print("本次执行公司主体为{}，共耗时{}秒！".format(tax_num,(end_time-start_time)))
     web.quit()
 """
 待优化方向：
@@ -184,6 +187,4 @@ if __name__=="__main__":
 4、校验税金总数，不一定有必要，但是可以考虑。
 """
 
-
-    
 
